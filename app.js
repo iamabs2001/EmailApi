@@ -1,5 +1,7 @@
 var express = require('express');
 var config = require('./config/main.config');
+var authapi = require('./api/auth.api');
+var mailapi = require('./api/mail.api');
 var helmet = require('helmet');
 var app = express();
 
@@ -17,9 +19,8 @@ app.all('/*',(req, res, next) => {
 });
 
 // ROUTES OF API
-app.get('/',(req, res) => {
-    res.send("Hello world");
-});
+app.use('/api/auth/',authapi);
+app.use('/api/mail/',mailapi);
 
 // SERVER 
 app.listen(config.port, () => console.log("server running at "+config.port));
