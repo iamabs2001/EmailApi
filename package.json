@@ -1,0 +1,23 @@
+{
+  "name": "emailapi",
+  "version": "1.0.0",
+  "description": "A Email api written in node.js & mongodb",
+  "main": "app.js",
+  "scripts": {
+    "start":"node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamabs2001/EmailApi.git"
+  },
+  "author": "abhijeet sharma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iamabs2001/EmailApi/issues"
+  },
+  "homepage": "https://github.com/iamabs2001/EmailApi#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
