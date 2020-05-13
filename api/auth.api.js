@@ -16,8 +16,8 @@ router.get("/logout",(req, res, next) => {
 });
 
 // Return true is uesr is exists
-router.get("/isuser/:email",(req, res, next) => {
-    res.send("maybe #"+req.params.email+" exists");
+router.get("/isuser/",(req, res, next) => {
+    res.send("maybe exits");
 });
 
 module.exports = router;

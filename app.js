@@ -3,10 +3,12 @@ var config = require('./config/main.config');
 var authapi = require('./api/auth.api');
 var mailapi = require('./api/mail.api');
 var helmet = require('helmet');
+var morgan =  require('morgan');
 var app = express();
 
 // Middlewares
 app.use(helmet());
+app.use(morgan('dev'));
 app.disable('x-powered-by');
 
 // CORS & HEADER SECURITY

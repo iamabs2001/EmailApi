@@ -18,3 +18,16 @@ subject : String : max 80
 body : String : max 500
 delbysender : Boolean(Default=false)
 delbyreceiver : Boolean(Default=false)
+
+#ROUTES
+
+#/api/auth/signup  --post
+#/api/auth/login  --post
+#/api/auth/isuser  --post
+#/api/auth/logout  --get
+
+#/api/mail/bin  --get
+#/api/mail/send -- post
+#/api/mail/inbox --get
+#/api/mail/unsend --delete
+#/api/mail/clearbin  --delete
