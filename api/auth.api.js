@@ -35,7 +35,12 @@ router.post("/signup",[
     let errors = validationResult(req);
     if(!errors.isEmpty()) return res.json({"error" : errors})
 
-    bcrypt.hash(req.body.password, config.salt, (err,hash) => {
+    // Check user exits or not
+    User.findOne({email : req.body.email },(err, user) => {
+        if(user) res.json({"message":"email already exits"});
+    });
+
+    bcrypt.hash(req.body.password, config.salt, (err,hash) => {    
         let theuser = new User({
             name : req.body.name,
             email : req.body.email,
