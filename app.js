@@ -4,13 +4,15 @@ var authapi = require('./api/auth.api');
 var mailapi = require('./api/mail.api');
 var helmet = require('helmet');
 var morgan =  require('morgan');
+const bodyParser = require('body-parser');
 var app = express();
 
 // Middlewares
 app.use(helmet());
 app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.disable('x-powered-by');
-
 // CORS & HEADER SECURITY
 app.all('/*',(req, res, next) => {
     res.setHeader("X-Powered-By","abhijeet");
