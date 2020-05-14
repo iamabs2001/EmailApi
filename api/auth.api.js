@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const User = require('../models/user.model');
 
 //  Login & return jwt 
@@ -7,14 +9,20 @@ router.post("/login",[
     check('email','Email is required').not().isEmpty().isEmail().withMessage('its Not a valid email'),
     check('password','password is required').not().isEmpty()
 ],(req, res, next) => {
+    
     let errors = validationResult(req);
     if(!errors.isEmpty()) return res.json({"error" : errors})
-    
-    User.findOne({email : req.body.email , password:req.body.password},(err, user) => {
-        if(err) res.json({"error":err});
-        if(user) res.json({"message":"Login Success","name":user.name})
-        else res.json({"message":"Login failed"});
-    });
+
+    User.findOne({email : req.body.email }).then((user) => {
+        if(!user)
+            res.json({"message":"User not found"})
+        else {
+            bcrypt.compare(req.body.password, user.password, function (err, result) {
+                if (result == true) res.json({"message":"Login Success","name":user.name});
+                else res.json({"message":"Incorrect password"});
+         });
+        }
+     }); 
 });
 
 // Register a new user 
@@ -27,16 +35,17 @@ router.post("/signup",[
     let errors = validationResult(req);
     if(!errors.isEmpty()) return res.json({"error" : errors})
 
-    let theuser = new User({
-        name : req.body.name,
-        email : req.body.email,
-        password : req.body.password
-    });
-
-    theuser.save().then(data => {
-        res.json({"message" : "signup successfull"});
-    }).catch(err => {
-        res.json({"message" : "signup failed!","error":err})
+    bcrypt.hash(req.body.password, saltRounds, (err,hash) => {
+        let theuser = new User({
+            name : req.body.name,
+            email : req.body.email,
+            password : hash
+        });
+        theuser.save().then(data => {
+            res.json({"message" : "signup successfull"});
+        }).catch(err => {
+            res.json({"message" : "signup failed!","error":err})
+        });
     });
 });
 
