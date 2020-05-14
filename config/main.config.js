@@ -1,7 +1,9 @@
 config =  {
     port : "8080",
     dburl : "mongodb://localhost:27017/email",
-    salt : 10
+    salt : 10,
+    expire : '7d',
+    secret : 'mysecretjsontoken007jamesbondairlift'
 }
 
 module.exports = config;

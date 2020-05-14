@@ -5,6 +5,7 @@ var mailapi = require('./api/mail.api');
 var helmet = require('helmet');
 var morgan =  require('morgan');
 const bodyParser = require('body-parser');
+const isjwtAuth = require('./api/jwt.api');
 var app = express();
 
 // Middlewares
@@ -24,7 +25,7 @@ app.all('/*',(req, res, next) => {
 
 // ROUTES OF API
 app.use('/api/auth/',authapi);
-app.use('/api/mail/',mailapi);
+app.use('/api/mail/', isjwtAuth, mailapi);
 
 // SERVER 
 app.listen(config.port, () => console.log("server running at "+config.port));

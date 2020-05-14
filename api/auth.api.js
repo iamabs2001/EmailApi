@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const config = require('../config/main.config');
 const User = require('../models/user.model');
 
@@ -15,11 +16,15 @@ router.post("/login",[
 
     User.findOne({email : req.body.email }).then((user) => {
         if(!user)
-            res.json({"message":"User not found"})
+            res.json({"message":"User not found",success:false})
         else {
             bcrypt.compare(req.body.password, user.password, function (err, result) {
-                if (result == true) res.json({"message":"Login Success","name":user.name});
-                else res.json({"message":"Incorrect password"});
+                if (result == false) {
+                    res.json({"message":"Incorrect password",success:false});
+                } else {
+                    let token = jwt.sign({ email : user.email },config.secret,{expiresIn : config.expire});
+                    res.json({"message":"Login Success",success:true,"token":token});
+                }
          });
         }
      }); 
@@ -37,7 +42,7 @@ router.post("/signup",[
 
     // Check user exits or not
     User.findOne({email : req.body.email },(err, user) => {
-        if(user) res.json({"message":"email already exits"});
+        if(user) res.json({"message":"email already exits",success:false});
     });
 
     bcrypt.hash(req.body.password, config.salt, (err,hash) => {    
@@ -47,9 +52,10 @@ router.post("/signup",[
             password : hash
         });
         theuser.save().then(data => {
-            res.json({"message" : "signup successfull"});
+            let token = jwt.sign({ email : req.body.email },config.secret,{expiresIn : config.expire});
+            res.json({"message" : "signup successfull",success:true,"token":token});
         }).catch(err => {
-            res.json({"message" : "signup failed!","error":err})
+            res.json({"message" : "signup failed!","error":err,success:false})
         });
     });
 });
@@ -69,8 +75,8 @@ router.post("/isuser/",[
 
     User.findOne({ email : req.body.email},(err, data) => {
         if(err) res.json({"error": err})
-        if(data) res.json({"isuser":true,"name": data.name})
-        else res.json({"isuser":false})
+        if(data) res.json({"message":"user found","name": data.name,success:true})
+        else res.json({success:false,"message":"user not found"})
     });
 });
 
