@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const config = require('../config/main.config');
 const User = require('../models/user.model');
 
 //  Login & return jwt 
@@ -35,7 +35,7 @@ router.post("/signup",[
     let errors = validationResult(req);
     if(!errors.isEmpty()) return res.json({"error" : errors})
 
-    bcrypt.hash(req.body.password, saltRounds, (err,hash) => {
+    bcrypt.hash(req.body.password, config.salt, (err,hash) => {
         let theuser = new User({
             name : req.body.name,
             email : req.body.email,

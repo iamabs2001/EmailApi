@@ -1,8 +1,7 @@
 var mongoose = require('mongoose');
+var config = require('./main.config');
 
-var uri = "mongodb://localhost:27017/email";
-
-mongoose.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect(config.dburl, { useUnifiedTopology: true, useNewUrlParser: true });
 
 var db = mongoose.connection;
 
