@@ -1,7 +1,7 @@
 #user-model
 _id
-name : max 30 : required : String
-email : max 30 : required : unique : String
+name : max 40 : required : String
+email : max 40 : required : unique : String
 password : max 50 : required : String (Bcrypt)
 status : String
 profile : String (_id : img to url)
