@@ -3,8 +3,18 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/user.model');
 
 //  Login & return jwt 
-router.get("/login",(req, res, next) => {
-    res.send("Login");
+router.post("/login",[
+    check('email','Email is required').not().isEmpty().isEmail().withMessage('its Not a valid email'),
+    check('password','password is required').not().isEmpty()
+],(req, res, next) => {
+    let errors = validationResult(req);
+    if(!errors.isEmpty()) return res.json({"error" : errors})
+    
+    User.findOne({email : req.body.email , password:req.body.password},(err, user) => {
+        if(err) res.json({"error":err});
+        if(user) res.json({"message":"Login Success","name":user.name})
+        else res.json({"message":"Login failed"});
+    });
 });
 
 // Register a new user 
@@ -14,12 +24,10 @@ router.post("/signup",[
     check('password','password is required').not().isEmpty().isLength({min:6,max:50}).withMessage('password length must between 6 to 50')
 ],(req, res, next) => {
     
-    var errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.json({"error" : errors})
-    }
+    let errors = validationResult(req);
+    if(!errors.isEmpty()) return res.json({"error" : errors})
 
-    var theuser = new User({
+    let theuser = new User({
         name : req.body.name,
         email : req.body.email,
         password : req.body.password
@@ -41,17 +49,15 @@ router.get("/logout",(req, res, next) => {
 router.post("/isuser/",[
     check('email','email is requied to know user').not().isEmpty().isEmail().withMessage('not a valid email')
 ],(req, res, next) => {
-    var errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.json({"error" : errors});
-    }
 
-    let email = req.body.email;
-    User.findOne({ email : email}).then(data => {
-        res.json({"message":"user found","name":data.name});
-    }).catch(err => {
-        res.json({"message":"user not found"})
-    })
+    let errors = validationResult(req);
+    if(!errors.isEmpty()) return res.json({"error" : errors});
+
+    User.findOne({ email : req.body.email},(err, data) => {
+        if(err) res.json({"error": err})
+        if(data) res.json({"isuser":true,"name": data.name})
+        else res.json({"isuser":false})
+    });
 });
 
 module.exports = router;
