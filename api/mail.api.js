@@ -33,6 +33,19 @@ router.post("/send",[
     
 });
 
+router.get("/outbox",(req, res, next) => {
+    User.findOne({_id : req.user._id},(err,user) => {
+        if(err) res.json({success:false,"error":err});
+        if(!user) res.json({success:false,"message":"you cant access outbox"});
+        if(user) {
+            Mail.find({from:user.email}).sort({time:1}).exec((err,sortedmails)=> {
+                if(err) res.json({success:false,"error":err});
+                res.json({"mails":sortedmails});
+            });
+        }
+    });
+});
+
 // Unsend a mail
 router.get("/unsend",(req, res, next) => {
     res.send("mail has been deleted");
