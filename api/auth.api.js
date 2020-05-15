@@ -12,7 +12,7 @@ router.post("/login",[
 ],(req, res, next) => {
     
     let errors = validationResult(req);
-    if(!errors.isEmpty()) return res.json({"error" : errors})
+    if(!errors.isEmpty()) return res.json({"error" : errors,success:false})
 
     User.findOne({email : req.body.email }).then((user) => {
         if(!user)
@@ -22,7 +22,7 @@ router.post("/login",[
                 if (result == false) {
                     res.json({"message":"Incorrect password",success:false});
                 } else {
-                    let token = jwt.sign({ email : user.email },config.secret,{expiresIn : config.expire});
+                    let token = jwt.sign({ _id : user._id },config.secret,{expiresIn : config.expire});
                     res.json({"message":"Login Success",success:true,"token":token});
                 }
          });
@@ -38,7 +38,7 @@ router.post("/signup",[
 ],(req, res, next) => {
     
     let errors = validationResult(req);
-    if(!errors.isEmpty()) return res.json({"error" : errors})
+    if(!errors.isEmpty()) return res.json({"error" : errors, success:false})
 
     // Check user exits or not
     User.findOne({email : req.body.email },(err, user) => {
@@ -52,7 +52,7 @@ router.post("/signup",[
             password : hash
         });
         theuser.save().then(data => {
-            let token = jwt.sign({ email : req.body.email },config.secret,{expiresIn : config.expire});
+            let token = jwt.sign({ _id : user._id },config.secret,{expiresIn : config.expire});
             res.json({"message" : "signup successfull",success:true,"token":token});
         }).catch(err => {
             res.json({"message" : "signup failed!","error":err,success:false})
@@ -62,7 +62,8 @@ router.post("/signup",[
 
 // remove jwt 
 router.get("/logout",(req, res, next) => {
-    
+    // remove token store in angular client app
+    res.json({"message":"Logout Successfully",success:true});
 });
 
 // Return true is uesr is exists
@@ -71,10 +72,10 @@ router.post("/isuser/",[
 ],(req, res, next) => {
 
     let errors = validationResult(req);
-    if(!errors.isEmpty()) return res.json({"error" : errors});
+    if(!errors.isEmpty()) return res.json({"error" : errors,success:false});
 
     User.findOne({ email : req.body.email},(err, data) => {
-        if(err) res.json({"error": err})
+        if(err) res.json({"error": err,success:false})
         if(data) res.json({"message":"user found","name": data.name,success:true})
         else res.json({success:false,"message":"user not found"})
     });
