@@ -11,11 +11,7 @@ var mailSchema = new mongoose.Schema({
    },
    time : {
        type : time,
-       required : true
-   },
-   date : {
-       type : date,
-       required : true
+       default : Date.now
    },
    cc : {
        type : String
@@ -25,7 +21,7 @@ var mailSchema = new mongoose.Schema({
    },
    subject : {
         type : String,
-        maxlength : 60,
+        maxlength : 100,
         required : true
    },
    body : {

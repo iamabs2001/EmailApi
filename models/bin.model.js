@@ -11,12 +11,8 @@ var binSchema = new mongoose.Schema({
        required : true
    },
    time : {
-       type : time,
-       required : true
-   },
-   date : {
-       type : date,
-       required : true
+        type : Date,
+        default :Date.now
    },
    cc : {
        type : String
