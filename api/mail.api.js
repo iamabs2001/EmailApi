@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const Mail = require('../models/mail.model');
 const User = require('../models/user.model');
+const Bin = require('../models/bin.model');
+
 const {check, validationResult} = require('express-validator');
 
 // Send mail to a user
@@ -89,14 +91,30 @@ router.get("/inbox",(req, res, next) => {
     });
 });
 
-// Deleted Mails in Bin
+// Show Deleted Mails in Bin
 router.get("/bin",(req, res, next) => {
-    res.send("Your bin");
+    User.findOne({_id : req.user._id},(err,user) => {
+        if(err) res.json({success:false,"error":err});
+        if(user) {
+            Bin.find({to:user.email},(err,mailsofbin) => {
+                if(err) res.json({success:false,"error":err});
+                res.json({success:true,"mails":mailsofbin});
+            })
+        }
+    });
 });
 
 // clear bin
 router.get("/clearbin",(req, res, next) => {
-    res.send("bin has been cleared!");
+    User.findOne({_id : req.user._id},(err,user) => {
+        if(err) res.json({success:false,"error":err});
+        if(user) {
+            Bin.deleteMany({to:user.email},(err,data) => {
+                if(err) res.json({success:false,"error":err});
+                res.json({success:true,"message":"Bin has been cleared!"});
+            })
+        }
+    });
 });
 
 module.exports = router;
