@@ -53,7 +53,16 @@ router.get("/unsend",(req, res, next) => {
 
 // Get your inbox
 router.get("/inbox",(req, res, next) => {
-    res.send("Your inbox");
+    User.findOne({_id : req.user._id},(err,user) => {
+        if(err) res.json({success:false,"error":err});
+        if(!user) res.json({success:false,"message":"you cant access outbox"});
+        if(user) {
+            Mail.find({to:user.email}).sort({time:1}).exec((err,sortedmails)=> {
+                if(err) res.json({success:false,"error":err});
+                res.json({"mails":sortedmails});
+            });
+        }
+    });
 });
 
 // Deleted Mails in Bin
