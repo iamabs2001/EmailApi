@@ -10,7 +10,7 @@ var mailSchema = new mongoose.Schema({
        required : true
    },
    time : {
-       type : time,
+       type : Date,
        default : Date.now
    },
    cc : {

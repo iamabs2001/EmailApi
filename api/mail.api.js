@@ -1,8 +1,36 @@
 const router = require('express').Router();
+const Mail = require('../models/mail.model');
+const User = require('../models/user.model');
+const {check, validationResult} = require('express-validator');
 
 // Send mail to a user
-router.get("/send",(req, res, next) => {
-    res.send("send mail is under developement");
+router.post("/send",[
+    check('to','sender email is required').not().isEmpty().isEmail().withMessage('invalid email'),
+    check('subject','subject can not be blank').not().isEmpty().isLength({max:100}).withMessage('subject must be less then 100 characters'),
+    check('body','mail body is required').not().isEmpty().isLength({max:1000}).withMessage('mail body must be less then 1000 characters'),
+],(req, res, next) => {
+
+    var errors = validationResult(req);
+    if(!errors.isEmpty()) return res.json({success:false,"messgae":"mail failed","error":errors});
+
+    User.findOne({_id : req.user._id},(err,user) => {
+        if(err) res.json({success:false,"error":err});
+        if(!user) res.json({success:false,"message":"Sorry you can't sent mail"});
+        if(user) {
+            let themail = new Mail({
+                from : user.email,
+                to : req.body.to,
+                subject: req.body.subject,
+                body: req.body.body
+            });
+            themail.save().then(data => {
+                res.json({success:true,"message":"mail has been sent","data":data});
+            }).catch(err => {
+                res.json({"messgae":"Mail failed",success:false,"error":err});
+            })
+        }
+    });
+    
 });
 
 // Unsend a mail

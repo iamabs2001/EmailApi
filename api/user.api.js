@@ -6,7 +6,6 @@ const {check, validationResult} = require('express-validator');
 
 // get user profile data
 router.get('/profile',(req, res, next) => {
-
         if(req.user._id == undefined || req.user._id == null) res.json({"message":"Access deny"});
         User.findOne({ _id : req.user._id },(err, user) => {
             if(err) res.json({"error":err});
