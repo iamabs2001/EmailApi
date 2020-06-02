@@ -46,16 +46,18 @@ router.post("/signup",[
     });
 
     bcrypt.hash(req.body.password, config.salt, (err,hash) => {    
+        if(err) res.json({success:false,"message":"Hasing / salting falied","error":err});
         let theuser = new User({
             name : req.body.name,
             email : req.body.email,
             password : hash
         });
-        theuser.save().then(data => {
-            let token = jwt.sign({ _id : user._id },config.secret,{expiresIn : config.expire});
-            res.json({"message" : "signup successfull",success:true,"token":token});
-        }).catch(err => {
-            res.json({"message" : "signup failed!","error":err,success:false})
+        theuser.save().then(resps => {
+            if(resps) {
+                // let token = jwt.sign({ _id : user._id },config.secret,{expiresIn : config.expire});
+                res.json({"message" : "signup successfull",success:true});
+            } 
+                res.json({"message" : "signup failed!","error":err,success:false})
         });
     });
 });
