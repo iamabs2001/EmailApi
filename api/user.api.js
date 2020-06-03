@@ -9,8 +9,8 @@ router.get('/profile',(req, res, next) => {
         if(req.user._id == undefined || req.user._id == null) res.json({"message":"Access deny"});
         User.findOne({ _id : req.user._id },(err, user) => {
             if(err) res.json({"error":err});
-            if(user) res.json({"name" : user.name, "email":user.email,"status":user.status,"profile":user.profile });
-            if(!user) res.json({"messgae":"user not found"});
+            if(user) res.json({"message":"User Found",success: true,"name" : user.name, "email":user.email,"status":user.status,"profile":user.profile });
+            if(!user) res.json({"messgae":"user not found", success:false});
         });
 });
 
@@ -21,7 +21,7 @@ router.put('/profile',[
 ],(req, res, next) => {    
     
     let errors = validationResult(req);
-    if(!errors.isEmpty()) return res.json({"error" : errors,success:false})
+    if(!errors.isEmpty()) return res.json({"error" : errors,success:false,message:"Profile update fail!"})
 
     // Check user exits or not
     User.findOne({ _id : req.user._id },(err, user) => {
@@ -34,7 +34,7 @@ router.put('/profile',[
                 let UserData = { name : req.body.name , password : hash, email : user.email}
                 User.findOneAndUpdate({_id : req.user._id},UserData,{new: true},(err, data) => {
                     if(err) res.json({"error":err,success:false});
-                    if(data) res.json({success:true,"message":"user updated"});
+                    if(data) res.json({success:true,"message":"Profile updated Successfully"});
                 });
             });
         }

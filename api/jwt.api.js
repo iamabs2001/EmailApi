@@ -8,7 +8,7 @@ const isAuth = (req, res, next) => {
 
     // token does not exist then give 403
     if(!token) {
-        return res.status(403).json({
+        return res.json({
             success: false,
             message: 'Login Required'
         });
@@ -26,9 +26,10 @@ const isAuth = (req, res, next) => {
 
     // if it has failed to verify, it will return an error message
     const onError = (error) => {
-        res.status(403).json({
+        res.json({
             success: false,
-            message: error.message
+            message: "failed to jwt singing",
+            error: error.message
         })
     }
 

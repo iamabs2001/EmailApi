@@ -20,7 +20,8 @@ app.all('/*',(req, res, next) => {
     res.setHeader("X-Powered-By","abhijeet");
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept,token,wow');
+    res.header('Access-Control-Allow-Credentials','true');
     next();
 });
 
